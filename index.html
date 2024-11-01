@@ -10,10 +10,10 @@
 
     <script>
         // Lấy invoice_id từ URL
-        const urlPath = window.location.pathname;
-        const invoiceId = urlPath.substring(urlPath.lastIndexOf('/') + 1);
+        const urlParams = new URLSearchParams(window.location.search);
+        const invoiceId = urlParams.get('invoice_id');
 
-        // URL tới nội dung HTML hóa đơn (thay thế bằng link API tải HTML của bạn nếu có)
+        // Tạo URL tới nội dung HTML hóa đơn
         const htmlUrl = `https://vancex101.github.io/fado-drafting-invoice/invoices/${invoiceId}.html`;
 
         // Tải và hiển thị HTML của hóa đơn
