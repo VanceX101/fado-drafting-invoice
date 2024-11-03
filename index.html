@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice Management</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9fc;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+        h1 {
+            text-align: center;
+            color: #4A90E2;
+        }
+        #app {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #fff;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border-radius: 8px;
+        }
+        .search-filter {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .search-filter input, .search-filter select {
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            width: 100%;
+        }
+        #invoice-list {
+            list-style: none;
+            padding: 0;
+        }
+        .invoice-item {
+            padding: 15px;
+            margin: 10px 0;
+            background-color: #f4f6f8;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .invoice-item a {
+            font-weight: bold;
+            color: #4A90E2;
+            text-decoration: none;
+        }
+        .invoice-item .status {
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+        .status-paid {
+            background-color: #e0f7e9;
+            color: #2d8631;
+        }
+        .status-unpaid {
+            background-color: #fde8e8;
+            color: #e53935;
+        }
+        .status-overdue {
+            background-color: #fff4e0;
+            color: #e86c00;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <h1>Invoice Management</h1>
+        
+        <!-- Search & Filter Section -->
+        <div class="search-filter">
+            <input type="text" id="search-input" placeholder="Search by Invoice ID or Customer Name">
+            <select id="status-filter">
+                <option value="all">All Statuses</option>
+                <option value="paid">Paid</option>
+                <option value="unpaid">Unpaid</option>
+                <option value="overdue">Overdue</option>
+            </select>
+            <select id="sort-select">
+                <option value="date">Sort by Date</option>
+                <option value="amount">Sort by Amount</option>
+            </select>
+        </div>
+
+        <!-- Invoice List -->
+        <ul id="invoice-list">
+            <!-- Invoice items will be dynamically loaded here -->
+        </ul>
+    </div>
+
+    <script>
+        // Dummy data for demonstration purposes
+        const invoices = [
+            { id: '001', customer: 'Alice', date: '2024-10-01', amount: 150.00, status: 'paid' },
+            { id: '002', customer: 'Bob', date: '2024-10-15', amount: 250.00, status: 'unpaid' },
+            { id: '003', customer: 'Charlie', date: '2024-09-21', amount: 100.00, status: 'overdue' },
+            // Add more invoice data as needed
+        ];
+
+        const invoiceList = document.getElementById('invoice-list');
+        const searchInput = document.getElementById('search-input');
+        const statusFilter = document.getElementById('status-filter');
+        const sortSelect = document.getElementById('sort-select');
+
+        function displayInvoices(filteredInvoices) {
+            invoiceList.innerHTML = '';
+            filteredInvoices.forEach(invoice => {
+                const listItem = document.createElement('li');
+                listItem.classList.add('invoice-item');
+                listItem.innerHTML = `
+                    <div>
+                        <a href="view.html?invoice_id=${invoice.id}">Invoice ${invoice.id}</a>
+                        <p>${invoice.customer} - $${invoice.amount} - ${invoice.date}</p>
+                    </div>
+                    <span class="status ${getStatusClass(invoice.status)}">${capitalize(invoice.status)}</span>
+                `;
+                invoiceList.appendChild(listItem);
+            });
+        }
+
+        function getStatusClass(status) {
+            return status === 'paid' ? 'status-paid' : 
+                   status === 'unpaid' ? 'status-unpaid' : 
+                   'status-overdue';
+        }
+
+        function capitalize(str) {
+            return str.charAt(0).toUpperCase() + str.slice(1);
+        }
+
+        function filterAndSortInvoices() {
+            let filteredInvoices = invoices.filter(invoice => {
+                const matchesSearch = invoice.id.includes(searchInput.value) || 
+                                      invoice.customer.toLowerCase().includes(searchInput.value.toLowerCase());
+                const matchesStatus = statusFilter.value === 'all' || invoice.status === statusFilter.value;
+                return matchesSearch && matchesStatus;
+            });
+
+            if (sortSelect.value === 'date') {
+                filteredInvoices.sort((a, b) => new Date(b.date) - new Date(a.date));
+            } else {
+                filteredInvoices.sort((a, b) => b.amount - a.amount);
+            }
+
+            displayInvoices(filteredInvoices);
+        }
+
+        searchInput.addEventListener('input', filterAndSortInvoices);
+        statusFilter.addEventListener('change', filterAndSortInvoices);
+        sortSelect.addEventListener('change', filterAndSortInvoices);
+
+        displayInvoices(invoices);
+    </script>
+</body>
+</html>
