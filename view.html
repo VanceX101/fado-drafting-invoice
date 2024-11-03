@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>View Invoice</title>
-</head>
-   body {
+    <style>
+        body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f9;
             padding: 20px;
@@ -56,4 +56,10 @@
             .then(html => {
                 document.getElementById('invoice-content').innerHTML = html;
             })
+            .catch(error => {
+                console.error("Error loading invoice:", error);
+                document.getElementById('invoice-content').innerHTML = "Invoice not found.";
+            });
+    </script>
+</body>
 </html>
