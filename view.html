@@ -5,30 +5,55 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>View Invoice</title>
 </head>
+   body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            padding: 20px;
+            max-width: 600px;
+            margin: auto;
+        }
+        #invoice-content {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: left;
+        }
+        .btn-container {
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .btn {
+            padding: 10px 20px;
+            text-align: center;
+            color: white;
+            background-color: #0066cc;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .btn-print {
+            background-color: #4caf50;
+        }
+    </style>
+</head>
 <body>
     <div id="invoice-content">Loading invoice...</div>
+    <div class="btn-container">
+        <a href="#" class="btn btn-download">Download PDF</a>
+        <button onclick="window.print()" class="btn btn-print">Print Invoice</button>
+    </div>
 
     <script>
-        // Lấy invoice_id từ URL
         const urlParams = new URLSearchParams(window.location.search);
         const invoiceId = urlParams.get('invoice_id');
+        const htmlUrl = `https://vancex101.github.io/fado-drafting-invoice/invoices/${invoiceId}.html`;
 
-        // Tạo URL tới nội dung HTML hóa đơn
-        const htmlUrl = `invoices/${invoiceId}.html`;
-
-        // Tải và hiển thị HTML của hóa đơn
         fetch(htmlUrl)
-            .then(response => {
-                if (!response.ok) throw new Error("Invoice not found");
-                return response.text();
-            })
+            .then(response => response.text())
             .then(html => {
                 document.getElementById('invoice-content').innerHTML = html;
             })
-            .catch(error => {
-                console.error("Error loading invoice:", error);
-                document.getElementById('invoice-content').innerHTML = "Invoice not found.";
-            });
-    </script>
-</body>
 </html>
