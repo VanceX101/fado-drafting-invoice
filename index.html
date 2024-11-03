@@ -4,14 +4,83 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Draft Invoices</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+            background-color: #f4f4f9;
+        }
+        h1 {
+            color: #333;
+        }
+        #search-bar {
+            margin: 20px auto;
+            padding: 10px;
+            width: 80%;
+            max-width: 400px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        li {
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        a {
+            text-decoration: none;
+            color: #0066cc;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
     <h1>Welcome to the Draft Invoices Page</h1>
     <p>Here you can view your draft invoices:</p>
-    <ul>
-        <li><a href="view.html?invoice_id=invoice_1">Invoice 1</a></li>
-        <li><a href="view.html?invoice_id=invoice_2">Invoice 2</a></li>
-        <li><a href="view.html?invoice_id=invoice_n">Invoice N</a></li>
-    </ul>
+
+    <input type="text" id="search-bar" placeholder="Search invoices by ID or name...">
+
+    <ul id="invoice-list"></ul>
+
+    <script>
+        // Tải danh sách hóa đơn từ file JSON
+        fetch('invoices.json')
+            .then(response => response.json())
+            .then(data => {
+                const invoiceList = document.getElementById('invoice-list');
+                const searchBar = document.getElementById('search-bar');
+
+                // Hiển thị tất cả hóa đơn ban đầu
+                function displayInvoices(invoices) {
+                    invoiceList.innerHTML = '';
+                    invoices.forEach(invoice => {
+                        const listItem = document.createElement('li');
+                        listItem.innerHTML = `<a href="view.html?invoice_id=${invoice.split('.')[0]}">${invoice}</a>`;
+                        invoiceList.appendChild(listItem);
+                    });
+                }
+
+                // Hiển thị danh sách hóa đơn từ JSON
+                displayInvoices(data.invoices);
+
+                // Tìm kiếm hóa đơn
+                searchBar.addEventListener('input', () => {
+                    const searchTerm = searchBar.value.toLowerCase();
+                    const filteredInvoices = data.invoices.filter(invoice =>
+                        invoice.toLowerCase().includes(searchTerm)
+                    );
+                    displayInvoices(filteredInvoices);
+                });
+            })
+            .catch(error => {
+                console.error('Error loading invoice list:', error);
+            });
+    </script>
 </body>
 </html>
